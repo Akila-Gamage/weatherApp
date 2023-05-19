@@ -21,7 +21,7 @@ type WeatherData struct{			//Define struct fields for the relavant data (City na
 func getWeatherDetails(c echo.Context) error {
 	city := c.QueryParam("city")					//Retrieve the value of the "city" query parameter from the request
 	apikey := "c0f10cb90100be1f117f65319f917b0e"	//Api-key
-	apiurl := fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, apikey)						//Api-Url
+	apiurl := fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, apikey)     //Api-Url
 
 	response, err := http.Get(apiurl)				//Make HTTP GET request to apiurl
 	if err != nil {
