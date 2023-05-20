@@ -6,6 +6,7 @@ import (							//Import the packages that are relavant
 	"io/ioutil"
 	"net/http"
 	"github.com/labstack/echo/v4"
+	"github.com/iancoleman/orderedmap"
 )
 
 type WeatherData struct{			//Define struct fields for the relavant data (City name, temperature, pressure, humidity)
@@ -16,6 +17,14 @@ type WeatherData struct{			//Define struct fields for the relavant data (City na
 		Humidity float64 `json:humidity`
 	}`json:"main"`
 
+}
+
+func NewOrderedMapFromMap(m map[string]interface{}) *orderedmap.OrderedMap {
+    om := orderedmap.New()
+    for key, value := range m {
+        om.Set(key, value)
+    }
+    return om
 }
 
 func getWeatherDetails(c echo.Context) error {
@@ -38,12 +47,12 @@ func getWeatherDetails(c echo.Context) error {
 		return err
 	}
 
-	responseData := map[string]interface{}{			//map created to structure the weather data obtained from the Api
+	responseData := NewOrderedMapFromMap(map[string]interface{}{			//map created to structure the weather data obtained from the Api
 		"Location (city)":	weatherData.Name,
 		"Temperature":		weatherData.Main.Temp,
 		"Pressure":			weatherData.Main.Pressure,
 		"Humidity":			weatherData.Main.Humidity,
-	}
+	})
 
 	return c.JSON(http.StatusOK, responseData)		//return the response data
 }
