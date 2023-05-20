@@ -54,7 +54,7 @@ func main() {
 		return c.String(http.StatusOK, "Hello Guys, Welcome to the WEATHER APP")
 	})
 
-	e.GET("/weather/", getWeatherDetails)
+	e.GET("/weather", getWeatherDetails)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
