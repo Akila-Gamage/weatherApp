@@ -7,6 +7,7 @@ import (							//Import the packages that are relavant
 	"net/http"
 	"github.com/labstack/echo/v4"
 	"github.com/iancoleman/orderedmap"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type WeatherData struct{			//Define struct fields for the relavant data (City name, temperature, pressure, humidity)
@@ -16,6 +17,10 @@ type WeatherData struct{			//Define struct fields for the relavant data (City na
 		Pressure float64 `json:pressure`
 		Humidity float64 `json:humidity`
 	}`json:"main"`
+	Weather []struct {
+		Description string `json:description`
+		Main string `json:main`
+	}`json:"weather"`
 
 }
 
@@ -28,7 +33,7 @@ func NewOrderedMapFromMap(m map[string]interface{}) *orderedmap.OrderedMap {
 }
 
 func getWeatherDetails(c echo.Context) error {
-	city := c.QueryParam("city")					//Retrieve the value of the "city" query parameter from the request
+	city := c.Param("city")					//Retrieve the value of the "city" query parameter from the request
 	apikey := "c0f10cb90100be1f117f65319f917b0e"	//Api-key
 	apiurl := fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, apikey)     //Api-Url
 
@@ -52,6 +57,8 @@ func getWeatherDetails(c echo.Context) error {
 		"Temperature":		weatherData.Main.Temp,
 		"Pressure":			weatherData.Main.Pressure,
 		"Humidity":			weatherData.Main.Humidity,
+		"Weather Type":		weatherData.Weather[0].Main,
+		"Weatheer Description":		weatherData.Weather[0].Description,
 	})
 
 	return c.JSON(http.StatusOK, responseData)		//return the response data
@@ -59,12 +66,12 @@ func getWeatherDetails(c echo.Context) error {
 
 func main() {
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello Guys, Welcome to the WEATHER APP")
-	})
 
-	e.GET("/weather", getWeatherDetails)
+	// Enable CORS
+	e.Use(middleware.CORS())
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.GET("/weather/:city", getWeatherDetails)
+
+	e.Logger.Fatal(e.Start(":8080"))
 }
 
