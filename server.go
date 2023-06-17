@@ -53,12 +53,12 @@ func getWeatherDetails(c echo.Context) error {
 	}
 
 	responseData := NewOrderedMapFromMap(map[string]interface{}{			//map created to structure the weather data obtained from the Api
-		"Location (city)":	weatherData.Name,
+		"Location":	weatherData.Name,
 		"Temperature":		weatherData.Main.Temp,
 		"Pressure":			weatherData.Main.Pressure,
 		"Humidity":			weatherData.Main.Humidity,
-		"Weather Type":		weatherData.Weather[0].Main,
-		"Weatheer Description":		weatherData.Weather[0].Description,
+		"WeatherType":		weatherData.Weather[0].Main,
+		"WeatheerDescription":		weatherData.Weather[0].Description,
 	})
 
 	return c.JSON(http.StatusOK, responseData)		//return the response data
