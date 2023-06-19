@@ -13,14 +13,24 @@ import (							//Import the packages that are relavant
 type WeatherData struct{			//Define struct fields for the relavant data (City name, temperature, pressure, humidity)
 	Name string `json:"name"`
 	Main struct{
-		Temp float64 `json:temp`
-		Pressure float64 `json:pressure`
-		Humidity float64 `json:humidity`
+		Temp float64 `json:"temp"`
+		Pressure float64 `json:"pressure"`
+		Humidity float64 `json:"humidity"`
 	}`json:"main"`
 	Weather []struct {
-		Description string `json:description`
-		Main string `json:main`
+		Description string `json:"description"`
+		Main string `json:"main"`
+		Icon string `json:"icon"`
 	}`json:"weather"`
+	Coordinates struct{
+		Lat float64 `json:"lat"`
+		Lon float64 `json:"lon"`
+	}`json:"coord"`
+	Wind struct {
+		Speed float64 `json:"speed"`
+		Deg int  `json:"deg"`
+		Gust float64 `json:"gust"`
+	}`json:"wind"`
 
 }
 
@@ -52,13 +62,21 @@ func getWeatherDetails(c echo.Context) error {
 		return err
 	}
 
+	iconURL := fmt.Sprintf("https://openweathermap.org/img/wn/%s.png", weatherData.Weather[0].Icon) //OpenWeatherApi icon url pattern
 	responseData := NewOrderedMapFromMap(map[string]interface{}{			//map created to structure the weather data obtained from the Api
 		"Location":	weatherData.Name,
-		"Temperature":		weatherData.Main.Temp,
-		"Pressure":			weatherData.Main.Pressure,
-		"Humidity":			weatherData.Main.Humidity,
-		"WeatherType":		weatherData.Weather[0].Main,
-		"WeatheerDescription":		weatherData.Weather[0].Description,
+		"Temperature":			weatherData.Main.Temp,
+		"Pressure":				weatherData.Main.Pressure,
+		"Humidity":				weatherData.Main.Humidity,
+		"WeatherType":			weatherData.Weather[0].Main,
+		"WeatherDescription":	weatherData.Weather[0].Description,
+		"WeatherIcon":			iconURL,
+		"Longitude":			weatherData.Coordinates.Lon,
+		"Latitude":				weatherData.Coordinates.Lat,
+		"WindSpeed":			weatherData.Wind.Speed,
+		"WindDeg":				weatherData.Wind.Deg,
+		"WindGust":				weatherData.Wind.Gust,
+
 	})
 
 	return c.JSON(http.StatusOK, responseData)		//return the response data
